@@ -1,0 +1,5 @@
+vendor/
+craftchallenge
+bin/
+/craft-challenge.iml
+/.idea/
