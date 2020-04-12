@@ -3,15 +3,18 @@ package service
 import (
 	"github.com/jrollin/craft-challenge/application/port_out"
 	"github.com/jrollin/craft-challenge/domain"
+	"log"
 )
 
 type GameLister struct {
+	log    *log.Logger
 	lister port_out.ListGames
 }
 
-func NewGameLister(lister port_out.ListGames) *GameLister {
+func NewGameLister(log *log.Logger, lister port_out.ListGames) *GameLister {
 	return &GameLister{
-		lister,
+		log:    log,
+		lister: lister,
 	}
 }
 

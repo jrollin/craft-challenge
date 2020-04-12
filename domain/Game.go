@@ -1,11 +1,27 @@
 package domain
 
-import "time"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type Game struct {
-	Id        int 		`json:"id"`
-	Code      string    `json:"code"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        uuid.UUID
+	Code      string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Stories   Stories
 }
 
+func NewGame(code string) *Game {
+	return &Game{Code: code}
+}
 
+func (g *Game) LoadStories(stories Stories) error {
+	g.Stories = stories
+	return nil
+}
+
+func (g *Game) GetFirstStory() (*Story, error) {
+	return g.Stories.GetFirstStory()
+}

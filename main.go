@@ -22,24 +22,27 @@ func main() {
 
 	// adapter
 	gr := persistence.NewGameRepositoryInMemoryAdapter()
-	// use cases
-	gl := service.NewGameLister(gr)
-	gf := service.NewGameFinder(gr)
-	gs := service.NewGameStorer(gr)
 
-	// Rest handlers
-	gh := rest.NewGameHandler(l, gl, gf, gs)
+	// use cases with related handlers
+	gl := service.NewGameLister(l, gr)
+	glh := rest.NewListGameHandler(l, gl)
+
+	gf := service.NewGameFinder(l, gr)
+	gfh := rest.NewGetGameHandler(l, gf)
+
+	gs := service.NewGameStorer(l, gr)
+	gsh := rest.NewAddGameHandler(l, gs)
 
 	// new router
 	sm := mux.NewRouter()
 
 	// define GET routes
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/games", gh.ListAll)
-	getRouter.HandleFunc("/games/{code:[a-z]+}", gh.GetGameByCode)
+	getRouter.HandleFunc("/games", glh.ListAll)
+	getRouter.HandleFunc("/games/{code:[a-z]+}", gfh.GetGameByCode)
 	// define POST routes
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/games", gh.AddGame)
+	postRouter.HandleFunc("/games", gsh.AddGame)
 
 	// configure http server
 	s := http.Server{

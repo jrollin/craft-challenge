@@ -1,23 +1,59 @@
 package persistence
 
 import (
+	"github.com/google/uuid"
 	"github.com/jrollin/craft-challenge/application/port_in"
 	"github.com/jrollin/craft-challenge/domain"
 	"time"
 )
 
 
-
 var gameList = []*domain.Game{
 	&domain.Game{
-		Id: 1,
+		ID:        uuid.New(),
 		Code:      "abc",
 		CreatedAt: time.Now().UTC(),
-	},
-	&domain.Game{
-		Id: 2,
-		Code:      "def",
-		CreatedAt: time.Now().UTC(),
+		Stories: []*domain.Story{
+			&domain.Story{
+				ID:          "1",
+				Title:       "First, a red bike",
+				Description: "Build me a red bike",
+				Specifications: []*domain.Specification{
+					&domain.Specification{
+						Description: "Bike should be red",
+						Rules: []*domain.Rule{
+							&domain.Rule{
+								Description: "should have property color with value red",
+								Query: domain.Request{
+									Method:       "GET",
+									URL:          "/car/2",
+									QueryParams:  nil,
+									BodyParams:   nil,
+									HeaderParams: nil,
+								},
+								Assertion: domain.Assertion{
+									RequestPart: "body",
+									Matcher:     "equals",
+									Param:       "$.color",
+									Expected:    "red",
+								},
+							},
+						},
+					},
+					&domain.Specification{Description: "Bike should have 2 wheels"},
+				},
+			},
+			&domain.Story{
+				ID:          "2",
+				Title:       "Then a yellow car",
+				Description: "Build me a car !",
+				Specifications: []*domain.Specification{
+					&domain.Specification{Description: "Car should be yellow"},
+					&domain.Specification{Description: "Car can move forward"},
+					&domain.Specification{Description: "Car can move backward"},
+				},
+			},
+		},
 	},
 }
 

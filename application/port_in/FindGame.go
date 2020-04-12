@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	ErrGameNotFound = errors.New("Game not found")
+	ErrGameNotFound = errors.New("game not found")
 )
 
 type FindGame interface {
