@@ -1,18 +1,25 @@
 package persistence
 
 import (
+	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/jrollin/craft-challenge/application/port_in"
 	"github.com/jrollin/craft-challenge/domain"
 	"time"
 )
 
+type GameRepositoryInMemory struct {
+	GameList map[string]*domain.Game
+}
 
-var gameList = []*domain.Game{
-	&domain.Game{
+func NewGameRepositoryInMemoryAdapter() *GameRepositoryInMemory {
+	gameList := make(map[string]*domain.Game)
+	gameList["abc"] = &domain.Game{
 		ID:        uuid.New(),
 		Code:      "abc",
 		CreatedAt: time.Now().UTC(),
+		Players:   map[string]*domain.Player{},
 		Stories: []*domain.Story{
 			&domain.Story{
 				ID:          "1",
@@ -54,42 +61,60 @@ var gameList = []*domain.Game{
 				},
 			},
 		},
-	},
-}
-
-
-type GameRepositoryInMemory struct {
-	
-}
-
-func NewGameRepositoryInMemoryAdapter() *GameRepositoryInMemory {
-	return &GameRepositoryInMemory{}
-}
-
-func (g *GameRepositoryInMemory) GetAllGames() ([]*domain.Game, error) {
-	return gameList, nil
-}
-
-
-func (g *GameRepositoryInMemory) GetGameByCode(code string) (*domain.Game, error) {
-	for _, p := range gameList {
-		if p.Code == code {
-			return p, nil
-		}
 	}
-	return nil, port_in.ErrGameNotFound
+
+	return &GameRepositoryInMemory{
+		GameList: gameList,
+	}
+}
+
+func (gr *GameRepositoryInMemory) GetAllGames() (domain.GameList, error) {
+	return gr.GameList, nil
+}
+
+func (gr *GameRepositoryInMemory) GetGameByCode(code string) (*domain.Game, error) {
+
+	g, ok := gr.GameList[code]
+	if ok == false {
+		return nil, port_in.ErrGameNotFound
+	}
+	return g, nil
 
 }
 
-func (g *GameRepositoryInMemory) Store(game *domain.Game) error {
-	for _, p := range gameList {
-		if p.Code == game.Code {
-			return port_in.ErrGameStorageFailed
-		}
+func (gr *GameRepositoryInMemory) AddGame(game *domain.Game) error {
+	_, ok := gr.GameList[game.Code]
+	if ok == true {
+		return port_in.ErrGameStorageFailed
 	}
-	gameList = append(gameList, game)
+	gr.GameList[game.Code] = game
 	return nil
 }
 
+func (gr *GameRepositoryInMemory) AddPlayerToGame(player *domain.Player, game *domain.Game) error {
+	g, err := gr.GetGameByCode(game.Code)
+	if err != nil {
+		return errors.New("error joining player to game")
+	}
 
+	fmt.Printf("game %s %s", g.Code, g.ID)
 
+	gr.GameList[g.Code].Players[player.Username] = player
+
+	return nil
+}
+
+func (gr *GameRepositoryInMemory) ListGamePlayers(game *domain.Game) (domain.PlayerList, error) {
+	g, ok := gr.GameList[game.Code]
+	if ok == false {
+		return nil, port_in.ErrGameNotFound
+	}
+
+	pl := []*domain.Player{}
+
+	for _, p := range g.Players {
+		pl = append(pl, p)
+	}
+
+	return pl, nil
+}

@@ -13,8 +13,7 @@ type Game struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func NewGame(game *domain.Game) *Game {
-
+func NewGameFromDomain(game *domain.Game) *Game {
 	g := &Game{
 		ID:        game.ID,
 		Code:      game.Code,

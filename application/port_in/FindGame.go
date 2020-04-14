@@ -10,5 +10,5 @@ var (
 )
 
 type FindGame interface {
-	Find(code string) (*domain.Game, error)
+	FindByCode(code string) (*domain.Game, error)
 }

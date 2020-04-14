@@ -9,10 +9,9 @@ type Story struct {
 
 type Stories []*Story
 
-func (s Stories) GetFirstStory() (*Story, error)  {
+func (s Stories) GetFirstStory() (*Story, error) {
 	return s[0], nil
 }
-
 
 type Specifications []*Specification
 
@@ -20,9 +19,6 @@ type Specification struct {
 	Description string
 	Rules       Rules
 }
-
-
-
 
 type Rules []*Rule
 

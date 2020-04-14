@@ -8,19 +8,19 @@ import (
 )
 
 type GameFinder struct {
-	log    *log.Logger
-	finder port_out.FindGame
+	l *log.Logger
+	f port_out.FindGame
 }
 
 func NewGameFinder(log *log.Logger, finder port_out.FindGame) *GameFinder {
 	return &GameFinder{
-		log: log,
-		finder: finder,
+		l: log,
+		f: finder,
 	}
 }
 
-func (f *GameFinder) Find(code string) (*domain.Game, error) {
-	g, err := f.finder.GetGameByCode(code)
+func (gf *GameFinder) FindByCode(code string) (*domain.Game, error) {
+	g, err := gf.f.GetGameByCode(code)
 	if err != nil {
 		return nil, port_in.ErrGameNotFound
 	}

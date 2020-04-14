@@ -5,5 +5,5 @@ import (
 )
 
 type ListGames interface {
-	GetAllGames() ([]*domain.Game, error)
+	GetAllGames() (domain.GameList, error)
 }

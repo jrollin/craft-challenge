@@ -10,17 +10,17 @@ var (
 	ErrGameStorageFailed = errors.New("game storage failed")
 )
 
-type StoreGame interface {
-	Store(AddGame *AddGame) error
+type AddGame interface {
+	AddGame(AddGameCommand *AddGameCommand) error
 }
 
-type AddGame struct {
+type AddGameCommand struct {
 	ID   uuid.UUID `validate:"required"`
 	Code string    `validate:"required"`
 }
 
-func NewAddGame(ID uuid.UUID, code string) (*AddGame, error) {
-	g := &AddGame{
+func NewAddGameCommand(ID uuid.UUID, code string) (*AddGameCommand, error) {
+	g := &AddGameCommand{
 		ID:   ID,
 		Code: code}
 
@@ -31,10 +31,7 @@ func NewAddGame(ID uuid.UUID, code string) (*AddGame, error) {
 	return g, nil
 }
 
-func (a *AddGame) validate() error {
+func (a *AddGameCommand) validate() error {
 	validate := validator.New()
 	return validate.Struct(a)
 }
-
-
-

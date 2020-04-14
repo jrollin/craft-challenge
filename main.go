@@ -30,8 +30,14 @@ func main() {
 	gf := service.NewGameFinder(l, gr)
 	gfh := rest.NewGetGameHandler(l, gf)
 
-	gs := service.NewGameStorer(l, gr)
+	gs := service.NewGameAdder(l, gr)
 	gsh := rest.NewAddGameHandler(l, gs)
+
+	pgj := service.NewPlayerGameJoiner(l, gr, gr)
+	pgjh := rest.NewPlayerJoinGameHandler(l, pgj)
+
+	pgl := service.NewGamePlayerLister(l, gr)
+	pglh := rest.NewListGamePlayersHandler(l, pgl, gf)
 
 	// new router
 	sm := mux.NewRouter()
@@ -40,9 +46,12 @@ func main() {
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/games", glh.ListAll)
 	getRouter.HandleFunc("/games/{code:[a-z]+}", gfh.GetGameByCode)
+	getRouter.HandleFunc("/games/{code:[a-z]+}/players", pglh.ListGamePlayers)
+
 	// define POST routes
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/games", gsh.AddGame)
+	postRouter.HandleFunc("/games/{code:[a-z]+}/players", pgjh.JoinPlayerGame)
 
 	// configure http server
 	s := http.Server{
