@@ -20,14 +20,14 @@ func NewAddGameHandler(log *log.Logger, adder port_in.AddGame) *AddGameHandler {
 	}
 }
 
-// swagger:route POST /game game addGameId
+// swagger:route POST /games game addGameId
 //
 // Add a new game
 //
 // Responses:
-// 	default: genericError
-//  201: noContentResponseWrapper
-//  422: validationError
+// 	default: genericErrorResponse
+//  201: noContentResponse
+//  422: validationErrorResponse
 func (gh *AddGameHandler) AddGame(rw http.ResponseWriter, r *http.Request) {
 
 	gh.l.Printf("[DEBUG] add new game %s", r.Method)

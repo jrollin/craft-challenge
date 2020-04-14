@@ -71,10 +71,22 @@ info:
   license:
     name: MIT
     url: http://opensource.org/licenses/MIT
-  title: of Craft challenge API
+  title: Craft challenge API
   version: 1.0.0
 paths:
-  /game:
+  /games:
+    get:
+      description: List all available games
+      operationId: GameListId
+      responses:
+        "200":
+          $ref: '#/responses/gameListResponse'
+        "422":
+          $ref: '#/responses/validationErrorResponse'
+        default:
+          $ref: '#/responses/genericErrorResponse'
+      tags:
+      - game
     post:
       description: Add a new game
       operationId: addGameId
@@ -88,26 +100,13 @@ paths:
         x-go-name: Code
       responses:
         "201":
-          $ref: '#/responses/noContentResponseWrapper'
+          $ref: '#/responses/noContentResponse'
         "422":
-          $ref: '#/responses/validationError'
+          $ref: '#/responses/validationErrorResponse'
         default:
-          $ref: '#/responses/genericError'
+          $ref: '#/responses/genericErrorResponse'
       tags:
       - game
-  /games:
-    get:
-      description: List all available games
-      operationId: GameListId
-      responses:
-        "200":
-          $ref: '#/responses/gameListResponse'
-        "422":
-          $ref: '#/responses/validationError'
-        default:
-          $ref: '#/responses/genericError'
-      tags:
-      - games
   /games/{code}:
     get:
       operationId: gameId
@@ -134,10 +133,12 @@ paths:
       responses:
         "200":
           $ref: '#/responses/playerListResponse'
+        "404":
+          $ref: '#/responses/notFoundResponse'
         "422":
-          $ref: '#/responses/validationError'
+          $ref: '#/responses/validationErrorResponse'
         default:
-          $ref: '#/responses/genericError'
+          $ref: '#/responses/genericErrorResponse'
       tags:
       - player
       - game
@@ -165,25 +166,19 @@ paths:
         x-go-name: Server
       responses:
         "201":
-          $ref: '#/responses/noContentResponseWrapper'
+          $ref: '#/responses/noContentResponse'
+        "404":
+          $ref: '#/responses/notFoundResponse'
         "422":
-          $ref: '#/responses/validationError'
+          $ref: '#/responses/validationErrorResponse'
         default:
-          $ref: '#/responses/genericError'
+          $ref: '#/responses/genericErrorResponse'
       tags:
       - game
       - player
 produces:
 - application/json
 responses:
-  errorResponse:
-    description: Generic error message returned as a string
-    schema:
-      $ref: '#/definitions/GenericError'
-  errorValidation:
-    description: Validation errors defined as an array of strings
-    schema:
-      $ref: '#/definitions/ValidationError'
   gameListResponse:
     headers:
       games:
@@ -203,7 +198,13 @@ responses:
         type: string
     schema:
       $ref: '#/definitions/UUID'
+  genericErrorResponse:
+    description: Generic error message returned as a string
+    schema:
+      $ref: '#/definitions/GenericError'
   noContentResponse:
+    description: No content is returned by this API endpoint
+  notFoundResponse:
     description: No content is returned by this API endpoint
   playerListResponse:
     schema:
@@ -222,6 +223,10 @@ responses:
         type: string
     schema:
       $ref: '#/definitions/UUID'
+  validationErrorResponse:
+    description: Validation errors defined as an array of strings
+    schema:
+      $ref: '#/definitions/ValidationError'
 schemes:
 - http
 swagger: "2.0"

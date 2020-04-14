@@ -22,9 +22,10 @@ func NewPlayerJoinGameHandler(l *log.Logger, pj port_in.JoinPlayerToGame) *Playe
 // Add a new player to game
 //
 // Responses:
-// 	default: genericError
-//  201: noContentResponseWrapper
-//  422: validationError
+// 	default: genericErrorResponse
+//  201: noContentResponse
+//  404: notFoundResponse
+//  422: validationErrorResponse
 func (gh *PlayerJoinGameHandler) JoinPlayerGame(rw http.ResponseWriter, r *http.Request) {
 
 	gh.l.Printf("[DEBUG] player joins game %s", r.Method)

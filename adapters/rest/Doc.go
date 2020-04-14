@@ -1,4 +1,4 @@
-// Package classification of Craft challenge API
+// Package Doc Craft challenge API
 //
 // Documentation for Craft challenge
 //
@@ -30,7 +30,7 @@ type ValidationError struct {
 
 
 // Generic error message returned as a string
-// swagger:response errorResponse
+// swagger:response genericErrorResponse
 type errorResponseWrapper struct {
 	// Description of the error
 	// in: body
@@ -38,11 +38,18 @@ type errorResponseWrapper struct {
 }
 
 // Validation errors defined as an array of strings
-// swagger:response errorValidation
+// swagger:response validationErrorResponse
 type errorValidationWrapper struct {
 	// Collection of the errors
 	// in: body
 	Body ValidationError
+}
+
+
+
+// No content is returned by this API endpoint
+// swagger:response notFoundResponse
+type notFoundResponseWrapper struct {
 }
 
 
