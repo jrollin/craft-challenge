@@ -27,7 +27,7 @@ func NewGetGameHandler(log *log.Logger, finder port_in.FindGame) *GetGameHandler
 
 // Responses:
 //	200: gameResponse
-//	404: errorResponse
+//	404: notFoundResponse
 
 // ListSingle handles GET requests
 func (gh *GetGameHandler) GetGameByCode(rw http.ResponseWriter, r *http.Request) {

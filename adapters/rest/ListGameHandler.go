@@ -21,14 +21,14 @@ func NewListGameHandler(log *log.Logger, lister port_in.ListGames) *ListGameHand
 }
 
 
-// swagger:route GET /games games GameListId
+// swagger:route GET /games game GameListId
 //
 // List all available games
 //
 // Responses:
-// 	default: genericError
+// 	default: genericErrorResponse
 //  200: gameListResponse
-//  422: validationError
+//  422: validationErrorResponse
 func (gh *ListGameHandler) ListAll(rw http.ResponseWriter, r *http.Request) {
 	gh.l.Println("[DEBUG] list all games")
 

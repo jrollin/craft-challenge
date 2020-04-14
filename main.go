@@ -2,15 +2,18 @@ package main
 
 import (
 	"context"
-	"github.com/gorilla/mux"
-	"github.com/jrollin/craft-challenge/adapters/persistence"
-	"github.com/jrollin/craft-challenge/adapters/rest"
-	"github.com/jrollin/craft-challenge/application/service"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/go-openapi/runtime/middleware"
+	"github.com/gorilla/mux"
+
+	"github.com/jrollin/craft-challenge/adapters/persistence"
+	"github.com/jrollin/craft-challenge/adapters/rest"
+	"github.com/jrollin/craft-challenge/application/service"
 )
 
 var bindAddress = ":3000"
@@ -54,6 +57,10 @@ func main() {
 	postRouter.HandleFunc("/games/{code:[a-z]+}/players", pgjh.JoinPlayerGame)
 
 	// doc
+	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
+	sh := middleware.Redoc(opts, nil)
+
+	sm.Handle("/docs", sh)
 	sm.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
 	// configure http server

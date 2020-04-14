@@ -27,9 +27,10 @@ func NewListGamePlayersHandler(log *log.Logger, lister port_in.ListGamePlayers, 
 // List all players for a game
 //
 // Responses:
-// 	default: genericError
+// 	default: genericErrorResponse
 //  200: playerListResponse
-//  422: validationError
+//  404: notFoundResponse
+//  422: validationErrorResponse
 func (gh *ListGamePlayersHandler) ListGamePlayers(rw http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
