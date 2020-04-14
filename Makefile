@@ -1,5 +1,6 @@
 BINARY=craftchallenge
 DOCKER_IMAGE=craftchallenge
+SWAGGER_BINARY=/usr/local/bin/swagger
 test: 
 	go test -v -cover -covermode=atomic ./...
 
@@ -33,5 +34,8 @@ lint:
 		--enable=goconst \
 		--enable=unconvert \
 		./...
+
+swagger:
+	GO111MODULE=off swagger generate spec -o ./swagger.yaml --scan-models
 
 .PHONY: clean install unittest build docker run stop vendor lint-prepare lint

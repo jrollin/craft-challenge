@@ -1,0 +1,227 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  Game:
+    properties:
+      code:
+        type: string
+        x-go-name: Code
+      created_at:
+        format: date-time
+        type: string
+        x-go-name: CreatedAt
+      id:
+        $ref: '#/definitions/UUID'
+      updated_at:
+        format: date-time
+        type: string
+        x-go-name: UpdatedAt
+    type: object
+    x-go-package: github.com/jrollin/craft-challenge/adapters/rest/api
+  GenericError:
+    description: GenericError is a generic error message returned by a server
+    properties:
+      message:
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: github.com/jrollin/craft-challenge/adapters/rest
+  Player:
+    properties:
+      id:
+        $ref: '#/definitions/UUID'
+      joined_at:
+        format: date-time
+        type: string
+        x-go-name: JoinedAt
+      server:
+        type: string
+        x-go-name: Server
+      username:
+        type: string
+        x-go-name: Username
+    type: object
+    x-go-package: github.com/jrollin/craft-challenge/adapters/rest/api
+  UUID:
+    description: |-
+      A UUID is a 128 bit (16 byte) Universal Unique IDentifier as defined in RFC
+      4122.
+    items:
+      format: uint8
+      type: integer
+    type: array
+    x-go-package: github.com/google/uuid
+  ValidationError:
+    description: ValidationError is a collection of validation error messages
+    properties:
+      messages:
+        items:
+          type: string
+        type: array
+        x-go-name: Messages
+    type: object
+    x-go-package: github.com/jrollin/craft-challenge/adapters/rest
+info:
+  contact:
+    email: linrol.news@gmail.com
+    name: Julien Rollin
+    url: https://www.julienrollin.com
+  description: Documentation for Craft challenge
+  license:
+    name: MIT
+    url: http://opensource.org/licenses/MIT
+  title: of Craft challenge API
+  version: 1.0.0
+paths:
+  /game:
+    post:
+      description: Add a new game
+      operationId: addGameId
+      parameters:
+      - description: The code to submit
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+        x-go-name: Code
+      responses:
+        "201":
+          $ref: '#/responses/noContentResponseWrapper'
+        "422":
+          $ref: '#/responses/validationError'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - game
+  /games:
+    get:
+      description: List all available games
+      operationId: GameListId
+      responses:
+        "200":
+          $ref: '#/responses/gameListResponse'
+        "422":
+          $ref: '#/responses/validationError'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - games
+  /games/{code}:
+    get:
+      operationId: gameId
+      parameters:
+      - description: The code of the game
+        in: path
+        name: code
+        required: true
+        type: string
+        x-go-name: Code
+      tags:
+      - game
+  /games/{code}/players:
+    get:
+      description: List all players for a game
+      operationId: playerListId
+      parameters:
+      - description: The code of the game
+        in: path
+        name: code
+        required: true
+        type: string
+        x-go-name: Code
+      responses:
+        "200":
+          $ref: '#/responses/playerListResponse'
+        "422":
+          $ref: '#/responses/validationError'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - player
+      - game
+    post:
+      description: Add a new player to game
+      operationId: addPlayerId
+      parameters:
+      - in: body
+        name: code
+        required: true
+        schema:
+          type: string
+        x-go-name: Code
+      - in: body
+        name: username
+        required: true
+        schema:
+          type: string
+        x-go-name: Username
+      - in: body
+        name: server
+        required: true
+        schema:
+          type: string
+        x-go-name: Server
+      responses:
+        "201":
+          $ref: '#/responses/noContentResponseWrapper'
+        "422":
+          $ref: '#/responses/validationError'
+        default:
+          $ref: '#/responses/genericError'
+      tags:
+      - game
+      - player
+produces:
+- application/json
+responses:
+  errorResponse:
+    description: Generic error message returned as a string
+    schema:
+      $ref: '#/definitions/GenericError'
+  errorValidation:
+    description: Validation errors defined as an array of strings
+    schema:
+      $ref: '#/definitions/ValidationError'
+  gameListResponse:
+    headers:
+      games:
+        items:
+          $ref: '#/definitions/Game'
+        type: array
+  gameResponse:
+    headers:
+      code:
+        type: string
+      created_at:
+        format: date-time
+        type: string
+      id: {}
+      updated_at:
+        format: date-time
+        type: string
+    schema:
+      $ref: '#/definitions/UUID'
+  noContentResponse:
+    description: No content is returned by this API endpoint
+  playerListResponse:
+    schema:
+      items:
+        $ref: '#/definitions/Player'
+      type: array
+  playerResponse:
+    headers:
+      id: {}
+      joined_at:
+        format: date-time
+        type: string
+      server:
+        type: string
+      username:
+        type: string
+    schema:
+      $ref: '#/definitions/UUID'
+schemes:
+- http
+swagger: "2.0"

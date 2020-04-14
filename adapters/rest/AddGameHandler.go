@@ -20,15 +20,22 @@ func NewAddGameHandler(log *log.Logger, adder port_in.AddGame) *AddGameHandler {
 	}
 }
 
+// swagger:route POST /game game addGameId
+//
+// Add a new game
+//
+// Responses:
+// 	default: genericError
+//  201: noContentResponseWrapper
+//  422: validationError
 func (gh *AddGameHandler) AddGame(rw http.ResponseWriter, r *http.Request) {
 
 	gh.l.Printf("[DEBUG] add new game %s", r.Method)
 
 	// decode request with anonymous struct
-	t := struct {
-		Code string `json:"code"`
-	}{}
-	err := utils.FromJSON(&t, r.Body)
+	t := &AddGameRequest{}
+
+	err := utils.FromJSON(t, r.Body)
 	if err != nil {
 		gh.l.Printf("[ERROR] error decoding request %s", err)
 		http.Error(rw, "Error processing request", http.StatusUnprocessableEntity)
@@ -53,4 +60,17 @@ func (gh *AddGameHandler) AddGame(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	rw.WriteHeader(http.StatusCreated)
+}
+
+
+
+// An AddGameRequest model.
+//
+// swagger:parameters addGameId
+type AddGameRequest struct {
+	// The code to submit
+	//
+	// required: true
+	// in: body
+	Code string `json:"code"`
 }

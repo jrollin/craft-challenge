@@ -2,6 +2,7 @@ package api
 
 import "github.com/jrollin/craft-challenge/domain"
 
+// swagger:response playerListResponse
 type PlayerList []*Player
 
 func NewPlayerListFromDomain(players domain.PlayerList) PlayerList {

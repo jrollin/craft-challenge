@@ -17,6 +17,14 @@ func NewPlayerJoinGameHandler(l *log.Logger, pj port_in.JoinPlayerToGame) *Playe
 	return &PlayerJoinGameHandler{l: l, pj: pj}
 }
 
+// swagger:route POST /games/{code}/players game player addPlayerId
+//
+// Add a new player to game
+//
+// Responses:
+// 	default: genericError
+//  201: noContentResponseWrapper
+//  422: validationError
 func (gh *PlayerJoinGameHandler) JoinPlayerGame(rw http.ResponseWriter, r *http.Request) {
 
 	gh.l.Printf("[DEBUG] player joins game %s", r.Method)
@@ -53,3 +61,20 @@ func (gh *PlayerJoinGameHandler) JoinPlayerGame(rw http.ResponseWriter, r *http.
 
 	rw.WriteHeader(http.StatusCreated)
 }
+
+
+// An AddGameRequest model.
+//
+// swagger:parameters addPlayerId
+type JoinPlayerRequest struct {
+	// required: true
+	// in: body
+	Code     string `json:"code"`
+	// required: true
+	// in: body
+	Username string `json:"username"`
+	// required: true
+	// in: body
+	Server   string `json:"server"`
+}
+

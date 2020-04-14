@@ -22,6 +22,14 @@ func NewListGamePlayersHandler(log *log.Logger, lister port_in.ListGamePlayers, 
 	}
 }
 
+// swagger:route GET /games/{code}/players player game playerListId
+//
+// List all players for a game
+//
+// Responses:
+// 	default: genericError
+//  200: playerListResponse
+//  422: validationError
 func (gh *ListGamePlayersHandler) ListGamePlayers(rw http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

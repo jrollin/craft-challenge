@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// swagger:response gameResponse
 type Game struct {
 	ID        uuid.UUID `json:"id"`
 	Code      string    `json:"code"`
