@@ -7,18 +7,18 @@ import (
 
 func TestAddGameValidationWithoutCode(t *testing.T) {
 	id := uuid.New()
-	_, err := NewAddGame(id, "")
+	_, err := NewAddGameCommand(id, "")
 
 	if err == nil {
-		t.Errorf("AddGame Code is required")
+		t.Errorf("AddGameCommand Code is required")
 	}
 }
 
 func TestAddGameValidation(t *testing.T) {
 	id := uuid.New()
-	_, err := NewAddGame(id, "abc")
+	_, err := NewAddGameCommand(id, "abc")
 
 	if err != nil {
-		t.Errorf("AddGame validation failed %v with %s", err, id)
+		t.Errorf("AddGameCommand validation failed %v with %s", err, id)
 	}
 }

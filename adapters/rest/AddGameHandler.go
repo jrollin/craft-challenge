@@ -9,20 +9,20 @@ import (
 )
 
 type AddGameHandler struct {
-	log    *log.Logger
-	storer port_in.StoreGame
+	l *log.Logger
+	s port_in.AddGame
 }
 
-func NewAddGameHandler(log *log.Logger, storer port_in.StoreGame) *AddGameHandler {
+func NewAddGameHandler(log *log.Logger, adder port_in.AddGame) *AddGameHandler {
 	return &AddGameHandler{
-		log:    log,
-		storer: storer,
+		l: log,
+		s: adder,
 	}
 }
 
-func (g *AddGameHandler) AddGame(rw http.ResponseWriter, r *http.Request) {
+func (gh *AddGameHandler) AddGame(rw http.ResponseWriter, r *http.Request) {
 
-	g.log.Printf("[DEBUG] add new game %s", r.Method)
+	gh.l.Printf("[DEBUG] add new game %s", r.Method)
 
 	// decode request with anonymous struct
 	t := struct {
@@ -30,25 +30,25 @@ func (g *AddGameHandler) AddGame(rw http.ResponseWriter, r *http.Request) {
 	}{}
 	err := utils.FromJSON(&t, r.Body)
 	if err != nil {
-		g.log.Printf("[ERROR] error decoding request %s", err)
+		gh.l.Printf("[ERROR] error decoding request %s", err)
 		http.Error(rw, "Error processing request", http.StatusUnprocessableEntity)
 		return
 	}
 
 	// create command from request
 	id := uuid.New()
-	ag, err := port_in.NewAddGame(id, t.Code)
+	ag, err := port_in.NewAddGameCommand(id, t.Code)
 	if err != nil {
-		g.log.Printf("[ERROR] error creating command %s", err)
+		gh.l.Printf("[ERROR] error creating command %s", err)
 		http.Error(rw, "Invalid data provided", http.StatusUnprocessableEntity)
 		return
 	}
 
 	// call usecase with valid command
-	err = g.storer.Store(ag)
+	err = gh.s.AddGame(ag)
 	if err != nil {
-		g.log.Println("[ERROR] Store game failed", err)
-		http.Error(rw, "Error storing game", http.StatusBadRequest)
+		gh.l.Printf("[ERROR] adding game failed %s", err)
+		http.Error(rw, "Error adding game", http.StatusBadRequest)
 		return
 	}
 

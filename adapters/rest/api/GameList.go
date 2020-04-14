@@ -8,12 +8,10 @@ type GameList struct {
 	Games []*Game `json:"games"`
 }
 
-func NewGameList(games []*domain.Game) *GameList {
-
+func NewGameListFromDomain(games domain.GameList) *GameList {
 	gl := &GameList{}
-
-	for _, p := range games {
-		gl.Games = append(gl.Games, NewGame(p))
+	for _, g := range games {
+		gl.Games = append(gl.Games, NewGameFromDomain(g))
 	}
 
 	return gl

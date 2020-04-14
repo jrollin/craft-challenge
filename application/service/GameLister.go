@@ -7,17 +7,17 @@ import (
 )
 
 type GameLister struct {
-	log    *log.Logger
-	lister port_out.ListGames
+	l  *log.Logger
+	lg port_out.ListGames
 }
 
-func NewGameLister(log *log.Logger, lister port_out.ListGames) *GameLister {
+func NewGameLister(log *log.Logger, lg port_out.ListGames) *GameLister {
 	return &GameLister{
-		log:    log,
-		lister: lister,
+		l:  log,
+		lg: lg,
 	}
 }
 
-func (f *GameLister) GetAllGames() ([]*domain.Game, error) {
-	return f.lister.GetAllGames()
+func (gl *GameLister) GetAllGames() (domain.GameList, error) {
+	return gl.lg.GetAllGames()
 }

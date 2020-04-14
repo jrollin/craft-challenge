@@ -9,36 +9,34 @@ import (
 )
 
 type ListGameHandler struct {
-	log    *log.Logger
-	lister port_in.ListGames
+	l  *log.Logger
+	lg port_in.ListGames
 }
 
 func NewListGameHandler(log *log.Logger, lister port_in.ListGames) *ListGameHandler {
 	return &ListGameHandler{
-		log:    log,
-		lister: lister,
+		l:  log,
+		lg: lister,
 	}
 }
 
-func (g *ListGameHandler) ListAll(rw http.ResponseWriter, r *http.Request) {
-	g.log.Println("[DEBUG] get all games")
+func (gh *ListGameHandler) ListAll(rw http.ResponseWriter, r *http.Request) {
+	gh.l.Println("[DEBUG] list all games")
 
-	rw.Header().Add("Content-Type", "application/json")
-
-	games, err := g.lister.GetAllGames()
+	games, err := gh.lg.GetAllGames()
 	if err != nil {
-		g.log.Print("[ERROR] listing games", err)
+		gh.l.Printf("[ERROR] listing games %s", err)
 		http.Error(rw, "Error listing games", http.StatusBadRequest)
 		return
 	}
 
 	// map domain to api representation
-	gamesApi := api.NewGameList(games)
+	gamesApi := api.NewGameListFromDomain(games)
 
 	err = utils.ToJSON(gamesApi, rw)
 	if err != nil {
 		// we should never be here but log the error just incase
-		g.log.Println("[ERROR] serializing game", err)
+		gh.l.Printf("[ERROR] serializing game %s", err)
 		http.Error(rw, "Error listing games", http.StatusBadRequest)
 	}
 }
