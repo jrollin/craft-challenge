@@ -53,14 +53,18 @@ func main() {
 	postRouter.HandleFunc("/games", gsh.AddGame)
 	postRouter.HandleFunc("/games/{code:[a-z]+}/players", pgjh.JoinPlayerGame)
 
+	// doc
+	sm.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
+
 	// configure http server
 	s := http.Server{
 		Addr:     bindAddress,
 		Handler:  sm,
 		ErrorLog: l,
-		// Good practice: enforce timeouts for servers you create!
+		// Good practice: enforce timeouts for servers
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
+		IdleTimeout:  120 * time.Second, // max time for connections using TCP Keep-Alive
 	}
 
 	// start http server

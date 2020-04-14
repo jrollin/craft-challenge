@@ -4,6 +4,7 @@ import (
 	"github.com/jrollin/craft-challenge/domain"
 )
 
+// swagger:response gameListResponse
 type GameList struct {
 	Games []*Game `json:"games"`
 }

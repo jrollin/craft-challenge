@@ -21,6 +21,15 @@ func NewGetGameHandler(log *log.Logger, finder port_in.FindGame) *GetGameHandler
 	}
 }
 
+// swagger:route GET /games/{code} game gameId
+
+// Get game by its code
+
+// Responses:
+//	200: gameResponse
+//	404: errorResponse
+
+// ListSingle handles GET requests
 func (gh *GetGameHandler) GetGameByCode(rw http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// swagger:response playerResponse
 type Player struct {
 	ID       uuid.UUID `json:"id"`
 	Username string    `json:"username"`
