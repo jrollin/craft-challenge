@@ -11,6 +11,7 @@ var (
 	ErrPlayerNotFound             = errors.New("player not found")
 	ErrUsernameAlreadyAssigned    = errors.New("username already assigned")
 	ErrCannotDeleteNotfoundPlayer = errors.New("cannot delete unfound player")
+	ErrGameAlreadyPublished       = errors.New("game already published")
 	ErrGameAlreadyStarted         = errors.New("cannot start already started game")
 	ErrGameAlreadyEnded           = errors.New("cannot end already ended game")
 )
@@ -22,14 +23,15 @@ type GameCode string
 type GameID uuid.UUID
 
 type Game struct {
-	ID        GameID
-	Code      GameCode
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	StartedAt time.Time
-	EndedAt   time.Time
-	Stories   Stories
-	Players   map[PlayerID]*Player
+	ID          GameID
+	Code        GameCode
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	PublishedAt time.Time
+	StartedAt   time.Time
+	EndedAt     time.Time
+	Stories     Stories
+	Players     map[PlayerID]*Player
 }
 
 // NewGame creates new Game with Code
@@ -77,6 +79,14 @@ func (g *Game) IsEnded() bool {
 		return true
 	}
 	return false
+}
+
+func (g *Game) PublishAt(date time.Time) error {
+	if !g.PublishedAt.IsZero() {
+		return ErrGameAlreadyPublished
+	}
+	g.PublishedAt = date
+	return nil
 }
 
 func (g *Game) HaveEnoughPlayers() bool {
