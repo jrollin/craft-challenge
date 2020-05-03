@@ -2,6 +2,7 @@ package port_in
 
 import (
 	"errors"
+
 	"github.com/jrollin/craft-challenge/domain"
 )
 
@@ -10,5 +11,5 @@ var (
 )
 
 type FindGame interface {
-	FindByCode(code string) (*domain.Game, error)
+	FindByCode(code domain.GameCode) (*domain.Game, error)
 }

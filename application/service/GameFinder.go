@@ -1,10 +1,11 @@
 package service
 
 import (
+	"log"
+
 	"github.com/jrollin/craft-challenge/application/port_in"
 	"github.com/jrollin/craft-challenge/application/port_out"
 	"github.com/jrollin/craft-challenge/domain"
-	"log"
 )
 
 type GameFinder struct {
@@ -19,7 +20,7 @@ func NewGameFinder(log *log.Logger, finder port_out.FindGame) *GameFinder {
 	}
 }
 
-func (gf *GameFinder) FindByCode(code string) (*domain.Game, error) {
+func (gf *GameFinder) FindByCode(code domain.GameCode) (*domain.Game, error) {
 	g, err := gf.f.GetGameByCode(code)
 	if err != nil {
 		return nil, port_in.ErrGameNotFound

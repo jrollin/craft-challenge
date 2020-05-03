@@ -1,16 +1,28 @@
 package domain
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
+type PlayerList []*Player
+
+type PlayerID uuid.UUID
+
 type Player struct {
-	ID       uuid.UUID
+	ID       PlayerID
 	Username string
 	Server   string
 	JoinedAt time.Time
 }
 
+func NewPlayer(username string, server string) *Player {
+	return &Player{ID: PlayerID(uuid.New()), Username: username, Server: server}
+}
 
-type PlayerList []*Player
+func NewPlayerWithID(id uuid.UUID, username string, server string) *Player {
+	p := NewPlayer(username, server)
+	p.ID = PlayerID(id)
+	return p
+}
