@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/jrollin/craft-challenge/application/port_in"
+	"github.com/jrollin/craft-challenge/application/port_in/command"
 	"github.com/jrollin/craft-challenge/application/port_out"
 	"github.com/jrollin/craft-challenge/domain"
 )
@@ -19,21 +19,21 @@ func NewPlayerGameJoiner(l *log.Logger, ap port_out.AddPlayerToGame, fg port_out
 	return &PlayerGameJoiner{l: l, ap: ap, fg: fg}
 }
 
-func (pg *PlayerGameJoiner) JoinPlayerToGame(joinGame *port_in.JoinGameCommand) error {
+func (pg *PlayerGameJoiner) JoinPlayerToGame(joinGame *command.JoinGameCommand) error {
 	// find existing game by code
 	g, err := pg.fg.GetGameByCode(domain.GameCode(joinGame.Code))
 	if err != nil {
-		return port_in.ErrGameNotFound
+		return port_out.ErrGameNotFound
 	}
 
 	// check game not started
 	if g.IsStarted() {
-		return port_in.ErrCannotJoinStartedGame
+		return command.ErrCannotJoinStartedGame
 	}
 
 	// check game not ended
 	if g.IsEnded() {
-		return port_in.ErrCannotJoinEndedGame
+		return command.ErrCannotJoinEndedGame
 	}
 
 	// @todo
@@ -49,7 +49,7 @@ func (pg *PlayerGameJoiner) JoinPlayerToGame(joinGame *port_in.JoinGameCommand) 
 	}
 	err = pg.ap.AddPlayerToGame(p, g)
 	if err != nil {
-		return port_in.ErrAddingPlayerToGameFailed
+		return command.ErrAddingPlayerToGameFailed
 	}
 	return nil
 

@@ -1,4 +1,4 @@
-package port_in
+package command
 
 import (
 	"errors"

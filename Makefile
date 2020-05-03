@@ -4,7 +4,10 @@ SWAGGER_BINARY=/usr/local/bin/swagger
 test: 
 	go test -v -cover -covermode=atomic ./...
 
-build:
+install:
+	go get
+
+build: clean
 	go build -o ${BINARY} main.go
 
 unittest:
@@ -36,6 +39,6 @@ lint:
 		./...
 
 swagger:
-	GO111MODULE=off swagger generate spec -o ./swagger.yaml --scan-models
+	swagger generate spec -o ./swagger.yaml --scan-models
 
 .PHONY: clean install unittest build docker run stop vendor lint-prepare lint

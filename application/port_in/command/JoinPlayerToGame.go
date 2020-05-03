@@ -1,7 +1,8 @@
-package port_in
+package command
 
 import (
 	"errors"
+
 	"github.com/go-playground/validator"
 	"github.com/google/uuid"
 )

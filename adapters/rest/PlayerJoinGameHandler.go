@@ -1,19 +1,20 @@
 package rest
 
 import (
-	"github.com/google/uuid"
-	"github.com/jrollin/craft-challenge/adapters/rest/utils"
-	"github.com/jrollin/craft-challenge/application/port_in"
 	"log"
 	"net/http"
+
+	"github.com/google/uuid"
+	"github.com/jrollin/craft-challenge/adapters/rest/utils"
+	"github.com/jrollin/craft-challenge/application/port_in/command"
 )
 
 type PlayerJoinGameHandler struct {
 	l  *log.Logger
-	pj port_in.JoinPlayerToGame
+	pj command.JoinPlayerToGame
 }
 
-func NewPlayerJoinGameHandler(l *log.Logger, pj port_in.JoinPlayerToGame) *PlayerJoinGameHandler {
+func NewPlayerJoinGameHandler(l *log.Logger, pj command.JoinPlayerToGame) *PlayerJoinGameHandler {
 	return &PlayerJoinGameHandler{l: l, pj: pj}
 }
 
@@ -45,7 +46,7 @@ func (gh *PlayerJoinGameHandler) JoinPlayerGame(rw http.ResponseWriter, r *http.
 
 	// create command from request
 	id := uuid.New()
-	jg, err := port_in.NewJoinGameCommand(id, t.Code, t.Username, t.Server)
+	jg, err := command.NewJoinGameCommand(id, t.Code, t.Username, t.Server)
 	if err != nil {
 		gh.l.Printf("[ERROR] error creating command  %s", err)
 		http.Error(rw, "Invalid data provided", http.StatusUnprocessableEntity)
@@ -63,19 +64,17 @@ func (gh *PlayerJoinGameHandler) JoinPlayerGame(rw http.ResponseWriter, r *http.
 	rw.WriteHeader(http.StatusCreated)
 }
 
-
 // An AddGameRequest model.
 //
 // swagger:parameters addPlayerId
 type JoinPlayerRequest struct {
 	// required: true
 	// in: body
-	Code     string `json:"code"`
+	Code string `json:"code"`
 	// required: true
 	// in: body
 	Username string `json:"username"`
 	// required: true
 	// in: body
-	Server   string `json:"server"`
+	Server string `json:"server"`
 }
-

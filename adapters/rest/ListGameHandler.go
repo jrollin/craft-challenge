@@ -1,25 +1,25 @@
 package rest
 
 import (
-	"github.com/jrollin/craft-challenge/adapters/rest/api"
-	"github.com/jrollin/craft-challenge/adapters/rest/utils"
-	"github.com/jrollin/craft-challenge/application/port_in"
 	"log"
 	"net/http"
+
+	"github.com/jrollin/craft-challenge/adapters/rest/api"
+	"github.com/jrollin/craft-challenge/adapters/rest/utils"
+	"github.com/jrollin/craft-challenge/application/port_in/query"
 )
 
 type ListGameHandler struct {
 	l  *log.Logger
-	lg port_in.ListGames
+	lg query.ListGames
 }
 
-func NewListGameHandler(log *log.Logger, lister port_in.ListGames) *ListGameHandler {
+func NewListGameHandler(log *log.Logger, lister query.ListGames) *ListGameHandler {
 	return &ListGameHandler{
 		l:  log,
 		lg: lister,
 	}
 }
-
 
 // swagger:route GET /games game GameListId
 //

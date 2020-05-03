@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jrollin/craft-challenge/application/port_in"
+	"github.com/jrollin/craft-challenge/application/port_out"
 	"github.com/jrollin/craft-challenge/domain"
 )
 
@@ -17,7 +17,7 @@ type GameRepositoryInMemory struct {
 func NewGameRepositoryInMemoryAdapter() *GameRepositoryInMemory {
 	gameList := make(map[string]*domain.Game)
 	gameList["abc"] = &domain.Game{
-		ID:        uuid.New(),
+		ID:        domain.GameID(uuid.New()),
 		Code:      domain.GameCode("abc"),
 		CreatedAt: time.Now().UTC(),
 		Players:   map[domain.PlayerID]*domain.Player{},
@@ -77,7 +77,7 @@ func (gr *GameRepositoryInMemory) GetGameByCode(code domain.GameCode) (*domain.G
 
 	g, ok := gr.GameList[string(code)]
 	if ok == false {
-		return nil, port_in.ErrGameNotFound
+		return nil, port_out.ErrGameNotFound
 	}
 	return g, nil
 
@@ -86,7 +86,7 @@ func (gr *GameRepositoryInMemory) GetGameByCode(code domain.GameCode) (*domain.G
 func (gr *GameRepositoryInMemory) AddGame(game *domain.Game) error {
 	_, ok := gr.GameList[string(game.Code)]
 	if ok == true {
-		return port_in.ErrGameStorageFailed
+		return port_out.ErrGameAlreadyExists
 	}
 	gr.GameList[string(game.Code)] = game
 	return nil
@@ -108,7 +108,7 @@ func (gr *GameRepositoryInMemory) AddPlayerToGame(player *domain.Player, game *d
 func (gr *GameRepositoryInMemory) ListGamePlayers(game *domain.Game) (domain.PlayerList, error) {
 	g, ok := gr.GameList[string(game.Code)]
 	if ok == false {
-		return nil, port_in.ErrGameNotFound
+		return nil, port_out.ErrGameNotFound
 	}
 
 	pl := []*domain.Player{}
@@ -124,7 +124,7 @@ func (gr *GameRepositoryInMemory) StartGame(game *domain.Game) error {
 
 	g, ok := gr.GameList[string(game.Code)]
 	if ok == false {
-		return port_in.ErrGameNotFound
+		return port_out.ErrGameNotFound
 	}
 
 	g.StartedAt = time.Now()
@@ -136,7 +136,7 @@ func (gr *GameRepositoryInMemory) ListGameStories(game *domain.Game) (domain.Sto
 
 	g, ok := gr.GameList[string(game.Code)]
 	if ok == false {
-		return nil, port_in.ErrGameNotFound
+		return nil, port_out.ErrGameNotFound
 	}
 
 	return g.Stories, nil

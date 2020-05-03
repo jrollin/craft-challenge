@@ -6,17 +6,17 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jrollin/craft-challenge/adapters/rest/utils"
-	"github.com/jrollin/craft-challenge/application/port_in"
+	"github.com/jrollin/craft-challenge/application/port_in/query"
 	"github.com/jrollin/craft-challenge/domain"
 )
 
 type ListGamePlayersHandler struct {
 	l  *log.Logger
-	lg port_in.ListGamePlayers
-	fg port_in.FindGame
+	lg query.ListGamePlayers
+	fg query.FindGame
 }
 
-func NewListGamePlayersHandler(log *log.Logger, lister port_in.ListGamePlayers, finder port_in.FindGame) *ListGamePlayersHandler {
+func NewListGamePlayersHandler(log *log.Logger, lister query.ListGamePlayers, finder query.FindGame) *ListGamePlayersHandler {
 	return &ListGamePlayersHandler{
 		l:  log,
 		lg: lister,

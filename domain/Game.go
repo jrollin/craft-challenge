@@ -22,7 +22,7 @@ type GameCode string
 type GameID uuid.UUID
 
 type Game struct {
-	ID        uuid.UUID
+	ID        GameID
 	Code      GameCode
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -32,14 +32,14 @@ type Game struct {
 	Players   map[PlayerID]*Player
 }
 
+// NewGame creates new Game with Code
 func NewGame(code string) *Game {
-	return &Game{ID: uuid.New(), Code: GameCode(code)}
+	return NewGameWithID(uuid.New(), code)
 }
 
+// NewGameWithID creates a new Game with id and code
 func NewGameWithID(id uuid.UUID, code string) *Game {
-	g := NewGame(code)
-	g.ID = id
-	return g
+	return &Game{ID: GameID(id), Code: GameCode(code)}
 }
 
 func (g *Game) Start() error {

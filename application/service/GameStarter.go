@@ -3,7 +3,7 @@ package service
 import (
 	"log"
 
-	"github.com/jrollin/craft-challenge/application/port_in"
+	"github.com/jrollin/craft-challenge/application/port_in/command"
 	"github.com/jrollin/craft-challenge/application/port_out"
 	"github.com/jrollin/craft-challenge/domain"
 )
@@ -23,15 +23,15 @@ func NewGameStarter(log *log.Logger, state port_out.StoreGameState) *GameStarter
 func (g *GameStarter) StartGame(game *domain.Game) error {
 
 	if !game.HaveEnoughPlayers() {
-		return port_in.ErrGameMustHaveOneOrMorePlayers
+		return command.ErrGameMustHaveOneOrMorePlayers
 	}
 
 	if game.IsStarted() {
-		return port_in.ErrGameAlreadyStarted
+		return command.ErrGameAlreadyStarted
 	}
 
 	if game.IsEnded() {
-		return port_in.ErrGameAlreadyEnded
+		return command.ErrGameAlreadyEnded
 	}
 
 	return g.s.StartGame(game)

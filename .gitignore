@@ -1,5 +1,5 @@
 vendor/
-craft-challenge
+craftchallenge
 bin/
-/craft-challenge.iml
+*.iml
 /.idea/
