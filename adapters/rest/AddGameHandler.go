@@ -1,19 +1,20 @@
 package rest
 
 import (
-	"github.com/google/uuid"
-	"github.com/jrollin/craft-challenge/adapters/rest/utils"
-	"github.com/jrollin/craft-challenge/application/port_in"
 	"log"
 	"net/http"
+
+	"github.com/google/uuid"
+	"github.com/jrollin/craft-challenge/adapters/rest/utils"
+	"github.com/jrollin/craft-challenge/application/port_in/command"
 )
 
 type AddGameHandler struct {
 	l *log.Logger
-	s port_in.AddGame
+	s command.AddGame
 }
 
-func NewAddGameHandler(log *log.Logger, adder port_in.AddGame) *AddGameHandler {
+func NewAddGameHandler(log *log.Logger, adder command.AddGame) *AddGameHandler {
 	return &AddGameHandler{
 		l: log,
 		s: adder,
@@ -44,7 +45,7 @@ func (gh *AddGameHandler) AddGame(rw http.ResponseWriter, r *http.Request) {
 
 	// create command from request
 	id := uuid.New()
-	ag, err := port_in.NewAddGameCommand(id, t.Code)
+	ag, err := command.NewAddGameCommand(id, t.Code)
 	if err != nil {
 		gh.l.Printf("[ERROR] error creating command %s", err)
 		http.Error(rw, "Invalid data provided", http.StatusUnprocessableEntity)
@@ -61,8 +62,6 @@ func (gh *AddGameHandler) AddGame(rw http.ResponseWriter, r *http.Request) {
 
 	rw.WriteHeader(http.StatusCreated)
 }
-
-
 
 // An AddGameRequest model.
 //

@@ -17,7 +17,7 @@ type Game struct {
 
 func NewGameFromDomain(game *domain.Game) *Game {
 	g := &Game{
-		ID:        game.ID,
+		ID:        uuid.UUID(game.ID),
 		Code:      string(game.Code),
 		CreatedAt: game.CreatedAt,
 		UpdatedAt: game.UpdatedAt,

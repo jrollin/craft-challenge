@@ -23,46 +23,49 @@ func main() {
 	l := log.New(os.Stdout, "craft-api ", log.LstdFlags)
 	l.Printf("Starting server on address %s", bindAddress)
 
-	// adapter
-	gr := persistence.NewGameRepositoryInMemoryAdapter()
-
-	// use cases
-	gl := service.NewGameLister(l, gr)
-	gf := service.NewGameFinder(l, gr)
-	gs := service.NewGameAdder(l, gr)
-	gst := service.NewGameStarter(l, gr)
-	pgj := service.NewPlayerGameJoiner(l, gr, gr)
-	pgl := service.NewGamePlayerLister(l, gr)
-	pgr := service.NewGameStoryReader(l, gr)
-	// related handlers
-	glh := rest.NewListGameHandler(l, gl)
-	gfh := rest.NewGetGameHandler(l, gf)
-	gsh := rest.NewAddGameHandler(l, gs)
-	gsth := rest.NewStartGameHandler(l, gst, gf)
-	pgjh := rest.NewPlayerJoinGameHandler(l, pgj)
-	pglh := rest.NewListGamePlayersHandler(l, pgl, gf)
-	pgrh := rest.NewGetGameCurrentStoryHandler(l, pgr, gf)
-
 	// new router
 	sm := mux.NewRouter()
 
+	// adapter
+	gr := persistence.NewGameRepositoryInMemoryAdapter()
+
+	// query use cases
+	ql := service.NewGameLister(l, gr)
+	qf := service.NewGameFinder(l, gr)
+	qpl := service.NewGamePlayerLister(l, gr)
+	qsr := service.NewGameStoryReader(l, gr)
+	// query handlers
+	qlh := rest.NewListGameHandler(l, ql)
+	qfh := rest.NewGetGameHandler(l, qf)
+	qplh := rest.NewListGamePlayersHandler(l, qpl, qf)
+	qsrh := rest.NewGetGameCurrentStoryHandler(l, qsr, qf)
+
 	// define GET routes
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/admin/games/{code:[a-z]+}/players", pglh.ListGamePlayers)
-	getRouter.HandleFunc("/admin/games", glh.ListAll)
-	getRouter.HandleFunc("/games/{code:[a-z]+}", gfh.GetGameByCode)
-	getRouter.HandleFunc("/games/{code:[a-z]+}/stories/current", pgrh.GetGameCurrentStory)
+	getRouter.HandleFunc("/games", qlh.ListAll)
+	getRouter.HandleFunc("/games/{code:[a-z]+}", qfh.GetGameByCode)
+	getRouter.HandleFunc("/games/{code:[a-z]+}/players", qplh.ListGamePlayers)
+	getRouter.HandleFunc("/games/{code:[a-z]+}/stories/current", qsrh.GetGameCurrentStory)
+
+	// command use cases
+	ca := service.NewGameAdder(l, gr)
+	cs := service.NewGameStarter(l, gr)
+	cpj := service.NewPlayerGameJoiner(l, gr, gr)
+	// command handlers
+	cah := rest.NewAddGameHandler(l, ca)
+	csh := rest.NewStartGameHandler(l, cs, qf)
+	cpjh := rest.NewPlayerJoinGameHandler(l, cpj)
 
 	// define POST routes
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/admin/games", gsh.AddGame)
-	postRouter.HandleFunc("/admin/games/{code:[a-z]+}/start", gsth.StartGame)
-	postRouter.HandleFunc("/games/{code:[a-z]+}/players", pgjh.JoinPlayerGame)
+	postRouter.HandleFunc("/games", cah.AddGame)
+	postRouter.HandleFunc("/games/{code:[a-z]+}/start", csh.StartGame)
+	postRouter.HandleFunc("/games/{code:[a-z]+}/players", cpjh.JoinPlayerGame)
 
 	// doc
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
 	sh := middleware.Redoc(opts, nil)
-
+	// redoc and swagger routes
 	sm.Handle("/docs", sh)
 	sm.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 

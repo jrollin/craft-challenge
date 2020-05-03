@@ -6,17 +6,17 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jrollin/craft-challenge/adapters/rest/utils"
-	"github.com/jrollin/craft-challenge/application/port_in"
+	"github.com/jrollin/craft-challenge/application/port_in/query"
 	"github.com/jrollin/craft-challenge/domain"
 )
 
 type GetGameCurrentStoryHandler struct {
 	l  *log.Logger
-	ds port_in.DisplayCurrentStory
-	fg port_in.FindGame
+	ds query.DisplayCurrentStory
+	fg query.FindGame
 }
 
-func NewGetGameCurrentStoryHandler(log *log.Logger, display port_in.DisplayCurrentStory, finder port_in.FindGame) *GetGameCurrentStoryHandler {
+func NewGetGameCurrentStoryHandler(log *log.Logger, display query.DisplayCurrentStory, finder query.FindGame) *GetGameCurrentStoryHandler {
 	return &GetGameCurrentStoryHandler{
 		l:  log,
 		ds: display,

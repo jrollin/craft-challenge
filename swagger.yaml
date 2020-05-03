@@ -176,6 +176,44 @@ paths:
       tags:
       - game
       - player
+  /games/{code}/start:
+    post:
+      description: Add a new game
+      operationId: addGameId
+      parameters:
+      - description: The code to submit
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+        x-go-name: Code
+      responses:
+        "201":
+          $ref: '#/responses/noContentResponse'
+        "422":
+          $ref: '#/responses/validationErrorResponse'
+        default:
+          $ref: '#/responses/genericErrorResponse'
+      tags:
+      - game
+  /games/{code}/stories/current:
+    get:
+      description: get current game story for player
+      operationId: playerStoryId
+      responses:
+        "200":
+          $ref: '#/responses/playerListResponse'
+        "404":
+          $ref: '#/responses/notFoundResponse'
+        "422":
+          $ref: '#/responses/validationErrorResponse'
+        default:
+          $ref: '#/responses/genericErrorResponse'
+      tags:
+      - story
+      - game
+      - story
 produces:
 - application/json
 responses:

@@ -1,9 +1,10 @@
 package service
 
 import (
+	"log"
+
 	"github.com/jrollin/craft-challenge/application/port_out"
 	"github.com/jrollin/craft-challenge/domain"
-	"log"
 )
 
 type GamePlayerLister struct {

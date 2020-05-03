@@ -17,12 +17,12 @@ type Player struct {
 	JoinedAt time.Time
 }
 
+// NewPlayer creates new Player with username and server
 func NewPlayer(username string, server string) *Player {
-	return &Player{ID: PlayerID(uuid.New()), Username: username, Server: server}
+	return NewPlayerWithID(uuid.New(), username, server)
 }
 
+// NewPlayerWithID creates new Player with id, username and server
 func NewPlayerWithID(id uuid.UUID, username string, server string) *Player {
-	p := NewPlayer(username, server)
-	p.ID = PlayerID(id)
-	return p
+	return &Player{ID: PlayerID(id), Username: username, Server: server}
 }

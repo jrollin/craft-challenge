@@ -1,4 +1,4 @@
-package port_in
+package query
 
 import (
 	"github.com/jrollin/craft-challenge/domain"

@@ -3,7 +3,7 @@ package service
 import (
 	"log"
 
-	"github.com/jrollin/craft-challenge/application/port_in"
+	"github.com/jrollin/craft-challenge/application/port_in/query"
 	"github.com/jrollin/craft-challenge/application/port_out"
 	"github.com/jrollin/craft-challenge/domain"
 )
@@ -23,11 +23,11 @@ func NewGameStoryReader(log *log.Logger, stories port_out.ListGameStories) *Game
 func (g *GameStoryReader) DisplayCurrentStoryForPlayer(game *domain.Game, player *domain.Player) (*domain.Story, error) {
 
 	if !game.IsStarted() {
-		return nil, port_in.ErrCannotDisplayStoryWhenGameNotStarted
+		return nil, query.ErrCannotDisplayStoryWhenGameNotStarted
 	}
 
 	if game.IsEnded() {
-		return nil, port_in.ErrCannotDisplayStoryWhenGameEnded
+		return nil, query.ErrCannotDisplayStoryWhenGameEnded
 	}
 
 	// retrieves stories for game

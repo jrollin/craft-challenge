@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/jrollin/craft-challenge/application/port_in"
+	"github.com/jrollin/craft-challenge/application/port_in/command"
 	"github.com/jrollin/craft-challenge/application/port_out"
 	"github.com/jrollin/craft-challenge/domain"
 )
@@ -21,10 +21,10 @@ func NewGameAdder(log *log.Logger, store port_out.AddGame) *GameAdder {
 	}
 }
 
-func (g *GameAdder) AddGame(AddGameCommand *port_in.AddGameCommand) error {
+func (g *GameAdder) AddGame(AddGameCommand *command.AddGameCommand) error {
 
 	game := &domain.Game{
-		ID:        AddGameCommand.ID,
+		ID:        domain.GameID(AddGameCommand.ID),
 		Code:      domain.GameCode(AddGameCommand.Code),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -33,7 +33,7 @@ func (g *GameAdder) AddGame(AddGameCommand *port_in.AddGameCommand) error {
 	err := g.s.AddGame(game)
 	if err != nil {
 		g.l.Printf("[ERROR] Error while storing game %s", err)
-		return port_in.ErrGameStorageFailed
+		return command.ErrGameStorageFailed
 	}
 	return nil
 }
