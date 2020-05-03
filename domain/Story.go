@@ -1,7 +1,11 @@
 package domain
 
+import "github.com/google/uuid"
+
+type StoryID uuid.UUID
+
 type Story struct {
-	ID             string
+	ID             StoryID
 	Title          string
 	Description    string
 	Specifications Specifications

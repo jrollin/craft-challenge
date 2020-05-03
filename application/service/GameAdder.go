@@ -1,11 +1,12 @@
 package service
 
 import (
+	"log"
+	"time"
+
 	"github.com/jrollin/craft-challenge/application/port_in"
 	"github.com/jrollin/craft-challenge/application/port_out"
 	"github.com/jrollin/craft-challenge/domain"
-	"log"
-	"time"
 )
 
 type GameAdder struct {
@@ -24,7 +25,7 @@ func (g *GameAdder) AddGame(AddGameCommand *port_in.AddGameCommand) error {
 
 	game := &domain.Game{
 		ID:        AddGameCommand.ID,
-		Code:      AddGameCommand.Code,
+		Code:      domain.GameCode(AddGameCommand.Code),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		Stories:   nil,

@@ -1,11 +1,13 @@
 package rest
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/jrollin/craft-challenge/adapters/rest/utils"
 	"github.com/jrollin/craft-challenge/application/port_in"
-	"log"
-	"net/http"
+	"github.com/jrollin/craft-challenge/domain"
 )
 
 type ListGamePlayersHandler struct {
@@ -18,7 +20,7 @@ func NewListGamePlayersHandler(log *log.Logger, lister port_in.ListGamePlayers, 
 	return &ListGamePlayersHandler{
 		l:  log,
 		lg: lister,
-		fg : finder,
+		fg: finder,
 	}
 }
 
@@ -37,7 +39,7 @@ func (gh *ListGamePlayersHandler) ListGamePlayers(rw http.ResponseWriter, r *htt
 	code := vars["code"]
 	gh.l.Printf("[DEBUG] list players fo game %s", code)
 
-	g, err := gh.fg.FindByCode(code)
+	g, err := gh.fg.FindByCode(domain.GameCode(code))
 	if err != nil {
 		gh.l.Printf("[ERROR] Game not found  %s", err)
 		http.Error(rw, "Error finding game", http.StatusBadRequest)

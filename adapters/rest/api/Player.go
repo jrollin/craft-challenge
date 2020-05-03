@@ -1,9 +1,10 @@
 package api
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/jrollin/craft-challenge/domain"
-	"time"
 )
 
 // swagger:response playerResponse
@@ -16,7 +17,7 @@ type Player struct {
 
 func NewPlayerFromDomain(player *domain.Player) *Player {
 	return &Player{
-		ID:       player.ID,
+		ID:       uuid.UUID(player.ID),
 		Username: player.Username,
 		Server:   player.Server,
 		JoinedAt: player.JoinedAt,

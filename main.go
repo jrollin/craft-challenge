@@ -26,34 +26,37 @@ func main() {
 	// adapter
 	gr := persistence.NewGameRepositoryInMemoryAdapter()
 
-	// use cases with related handlers
+	// use cases
 	gl := service.NewGameLister(l, gr)
-	glh := rest.NewListGameHandler(l, gl)
-
 	gf := service.NewGameFinder(l, gr)
-	gfh := rest.NewGetGameHandler(l, gf)
-
 	gs := service.NewGameAdder(l, gr)
-	gsh := rest.NewAddGameHandler(l, gs)
-
+	gst := service.NewGameStarter(l, gr)
 	pgj := service.NewPlayerGameJoiner(l, gr, gr)
-	pgjh := rest.NewPlayerJoinGameHandler(l, pgj)
-
 	pgl := service.NewGamePlayerLister(l, gr)
+	pgr := service.NewGameStoryReader(l, gr)
+	// related handlers
+	glh := rest.NewListGameHandler(l, gl)
+	gfh := rest.NewGetGameHandler(l, gf)
+	gsh := rest.NewAddGameHandler(l, gs)
+	gsth := rest.NewStartGameHandler(l, gst, gf)
+	pgjh := rest.NewPlayerJoinGameHandler(l, pgj)
 	pglh := rest.NewListGamePlayersHandler(l, pgl, gf)
+	pgrh := rest.NewGetGameCurrentStoryHandler(l, pgr, gf)
 
 	// new router
 	sm := mux.NewRouter()
 
 	// define GET routes
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/games", glh.ListAll)
+	getRouter.HandleFunc("/admin/games/{code:[a-z]+}/players", pglh.ListGamePlayers)
+	getRouter.HandleFunc("/admin/games", glh.ListAll)
 	getRouter.HandleFunc("/games/{code:[a-z]+}", gfh.GetGameByCode)
-	getRouter.HandleFunc("/games/{code:[a-z]+}/players", pglh.ListGamePlayers)
+	getRouter.HandleFunc("/games/{code:[a-z]+}/stories/current", pgrh.GetGameCurrentStory)
 
 	// define POST routes
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/games", gsh.AddGame)
+	postRouter.HandleFunc("/admin/games", gsh.AddGame)
+	postRouter.HandleFunc("/admin/games/{code:[a-z]+}/start", gsth.StartGame)
 	postRouter.HandleFunc("/games/{code:[a-z]+}/players", pgjh.JoinPlayerGame)
 
 	// doc

@@ -2,30 +2,62 @@ package domain
 
 import (
 	"errors"
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 var (
+	ErrPlayerNotFound             = errors.New("player not found")
 	ErrUsernameAlreadyAssigned    = errors.New("username already assigned")
 	ErrCannotDeleteNotfoundPlayer = errors.New("cannot delete unfound player")
+	ErrGameAlreadyStarted         = errors.New("cannot start already started game")
+	ErrGameAlreadyEnded           = errors.New("cannot end already ended game")
 )
 
 type GameList map[string]*Game
 
+type GameCode string
+
+type GameID uuid.UUID
+
 type Game struct {
 	ID        uuid.UUID
-	Code      string
+	Code      GameCode
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	StartedAt time.Time
 	EndedAt   time.Time
 	Stories   Stories
-	Players   map[string]*Player
+	Players   map[PlayerID]*Player
 }
 
 func NewGame(code string) *Game {
-	return &Game{Code: code}
+	return &Game{ID: uuid.New(), Code: GameCode(code)}
+}
+
+func NewGameWithID(id uuid.UUID, code string) *Game {
+	g := NewGame(code)
+	g.ID = id
+	return g
+}
+
+func (g *Game) Start() error {
+	if g.IsStarted() {
+		return ErrGameAlreadyStarted
+	}
+	g.StartedAt = time.Now()
+
+	return nil
+}
+
+func (g *Game) End() error {
+	if g.IsEnded() {
+		return ErrGameAlreadyEnded
+	}
+	g.EndedAt = time.Now()
+
+	return nil
 }
 
 func (g *Game) IsStarted() bool {
@@ -47,34 +79,46 @@ func (g *Game) IsEnded() bool {
 	return false
 }
 
-
+func (g *Game) HaveEnoughPlayers() bool {
+	if len(g.Players) > 0 {
+		return true
+	}
+	return false
+}
 
 func (g *Game) LoadStories(stories Stories) error {
 	g.Stories = stories
 	return nil
 }
 
-func (g *Game) GetFirstStory() (*Story, error) {
-	return g.Stories.GetFirstStory()
-}
-
 func (g *Game) AddPlayer(player *Player) error {
-	_, ok := g.Players[player.Username]
-	if ok == true {
+	p, _ := g.GetPlayerByUsername(player.Username)
+
+	if p != nil {
 		return ErrUsernameAlreadyAssigned
 	}
 
-	g.Players[player.Username] = player
+	g.Players[player.ID] = player
 
 	return nil
 }
 
 func (g *Game) RemovePlayer(player *Player) error {
-	_, ok := g.Players[player.Username]
-	if ok == false {
+	p, err := g.GetPlayerByUsername(player.Username)
+	if err != nil {
 		return ErrCannotDeleteNotfoundPlayer
 	}
-	delete(g.Players, player.Username)
+	delete(g.Players, p.ID)
 
 	return nil
+}
+
+func (g *Game) GetPlayerByUsername(username string) (*Player, error) {
+	for _, p := range g.Players {
+		if p.Username == username {
+			return p, nil
+		}
+	}
+
+	return nil, ErrPlayerNotFound
 }
