@@ -13,10 +13,10 @@ import (
 
 type GetGameHandler struct {
 	l *log.Logger
-	f query.FindGame
+	f query.FindGameByCode
 }
 
-func NewGetGameHandler(log *log.Logger, finder query.FindGame) *GetGameHandler {
+func NewGetGameHandler(log *log.Logger, finder query.FindGameByCode) *GetGameHandler {
 	return &GetGameHandler{
 		l: log,
 		f: finder,
@@ -39,7 +39,7 @@ func (gh *GetGameHandler) GetGameByCode(rw http.ResponseWriter, r *http.Request)
 	gh.l.Printf("[DEBUG] get game by code %s", code)
 
 	// find game by code received
-	game, err := gh.f.FindByCode(domain.GameCode(code))
+	game, err := gh.f.FindGameByCode(domain.GameCode(code))
 	if err != nil {
 		gh.l.Printf("[ERROR] Find game by code %s", err)
 		http.Error(rw, "Error finding game", http.StatusNotFound)

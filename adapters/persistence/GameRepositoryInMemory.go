@@ -17,7 +17,7 @@ type GameRepositoryInMemory struct {
 func NewGameRepositoryInMemoryAdapter() *GameRepositoryInMemory {
 	gameList := make(map[string]*domain.Game)
 	gameList["abc"] = &domain.Game{
-		ID:        domain.GameID(uuid.New()),
+		ID:        domain.GameID(uuid.MustParse("11111111-2222-3333-4444-555555555555")),
 		Code:      domain.GameCode("abc"),
 		CreatedAt: time.Now().UTC(),
 		Players:   map[domain.PlayerID]*domain.Player{},
@@ -83,6 +83,17 @@ func (gr *GameRepositoryInMemory) GetGameByCode(code domain.GameCode) (*domain.G
 
 }
 
+func (gr *GameRepositoryInMemory) GetGame(id domain.GameID) (*domain.Game, error) {
+
+	for _, p := range gr.GameList {
+		if p.ID == id {
+			return p, nil
+		}
+	}
+	return nil, port_out.ErrGameNotFound
+
+}
+
 func (gr *GameRepositoryInMemory) AddGame(game *domain.Game) error {
 	_, ok := gr.GameList[string(game.Code)]
 	if ok == true {
@@ -120,7 +131,7 @@ func (gr *GameRepositoryInMemory) ListGamePlayers(game *domain.Game) (domain.Pla
 	return pl, nil
 }
 
-func (gr *GameRepositoryInMemory) StartGame(game *domain.Game) error {
+func (gr *GameRepositoryInMemory) StoreGame(game *domain.Game) error {
 
 	g, ok := gr.GameList[string(game.Code)]
 	if ok == false {

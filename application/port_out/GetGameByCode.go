@@ -7,9 +7,9 @@ import (
 )
 
 var (
-	ErrGameNotFound = errors.New("Game not found")
+	ErrGameNotFoundByCode = errors.New("Game not found by code")
 )
 
-type FindGame interface {
+type GetGameByCode interface {
 	GetGameByCode(code domain.GameCode) (*domain.Game, error)
 }

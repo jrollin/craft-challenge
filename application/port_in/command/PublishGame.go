@@ -15,7 +15,7 @@ var (
 
 // PublishGame defines how to publish game
 type PublishGame interface {
-	publishGame(cmd *PublishGameCommand) error
+	PublishGame(cmd *PublishGameCommand) error
 }
 
 // PublishGameCommand defines command to use

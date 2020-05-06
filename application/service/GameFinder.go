@@ -10,17 +10,17 @@ import (
 
 type GameFinder struct {
 	l *log.Logger
-	f port_out.FindGame
+	f port_out.GetGameByCode
 }
 
-func NewGameFinder(log *log.Logger, finder port_out.FindGame) *GameFinder {
+func NewGameFinder(log *log.Logger, finder port_out.GetGameByCode) *GameFinder {
 	return &GameFinder{
 		l: log,
 		f: finder,
 	}
 }
 
-func (gf *GameFinder) FindByCode(code domain.GameCode) (*domain.Game, error) {
+func (gf *GameFinder) FindGameByCode(code domain.GameCode) (*domain.Game, error) {
 	g, err := gf.f.GetGameByCode(code)
 	if err != nil {
 		return nil, query.ErrGameNotFound

@@ -11,5 +11,5 @@ var (
 )
 
 type FindGame interface {
-	FindByCode(code domain.GameCode) (*domain.Game, error)
+	FindGame(id domain.GameID) (*domain.Game, error)
 }

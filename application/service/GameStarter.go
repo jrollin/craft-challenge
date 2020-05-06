@@ -5,22 +5,28 @@ import (
 
 	"github.com/jrollin/craft-challenge/application/port_in/command"
 	"github.com/jrollin/craft-challenge/application/port_out"
-	"github.com/jrollin/craft-challenge/domain"
 )
 
 type GameStarter struct {
 	l *log.Logger
-	s port_out.StoreGameState
+	g port_out.GetGame
+	s port_out.StoreGame
 }
 
-func NewGameStarter(log *log.Logger, state port_out.StoreGameState) *GameStarter {
+func NewGameStarter(log *log.Logger, game port_out.GetGame, state port_out.StoreGame) *GameStarter {
 	return &GameStarter{
 		l: log,
+		g: game,
 		s: state,
 	}
 }
 
-func (g *GameStarter) StartGame(game *domain.Game) error {
+func (g *GameStarter) StartGame(cmd *command.StartGameCommand) error {
+
+	game, err := g.g.GetGame(cmd.GameID)
+	if err != nil {
+		return port_out.ErrGameNotFound
+	}
 
 	if !game.HaveEnoughPlayers() {
 		return command.ErrGameMustHaveOneOrMorePlayers
@@ -34,5 +40,10 @@ func (g *GameStarter) StartGame(game *domain.Game) error {
 		return command.ErrGameAlreadyEnded
 	}
 
-	return g.s.StartGame(game)
+	err = game.Start()
+	if err != nil {
+		return command.ErrGameStartFailed
+	}
+
+	return g.s.StoreGame(game)
 }
