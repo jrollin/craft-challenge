@@ -12,10 +12,10 @@ import (
 type PlayerGameJoiner struct {
 	l  *log.Logger
 	ap port_out.AddPlayerToGame
-	fg port_out.FindGame
+	fg port_out.GetGameByCode
 }
 
-func NewPlayerGameJoiner(l *log.Logger, ap port_out.AddPlayerToGame, fg port_out.FindGame) *PlayerGameJoiner {
+func NewPlayerGameJoiner(l *log.Logger, ap port_out.AddPlayerToGame, fg port_out.GetGameByCode) *PlayerGameJoiner {
 	return &PlayerGameJoiner{l: l, ap: ap, fg: fg}
 }
 

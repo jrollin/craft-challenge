@@ -4,20 +4,19 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"github.com/jrollin/craft-challenge/adapters/rest/utils"
 	"github.com/jrollin/craft-challenge/application/port_in/command"
 	"github.com/jrollin/craft-challenge/application/port_in/query"
-	"github.com/jrollin/craft-challenge/domain"
 )
 
 type StartGameHandler struct {
 	l *log.Logger
-	f query.FindGame
+	f query.FindGameByCode
 	s command.StartGame
 }
 
-func NewStartGameHandler(log *log.Logger, starter command.StartGame, finder query.FindGame) *StartGameHandler {
+func NewStartGameHandler(log *log.Logger, starter command.StartGame, finder query.FindGameByCode) *StartGameHandler {
 	return &StartGameHandler{
 		l: log,
 		f: finder,
@@ -25,9 +24,9 @@ func NewStartGameHandler(log *log.Logger, starter command.StartGame, finder quer
 	}
 }
 
-// swagger:route POST /games/{code}/start game addGameId
+// swagger:route POST /games/{id}/start game addGameId
 //
-// Add a new game
+// Start a game
 //
 // Responses:
 // 	default: genericErrorResponse
@@ -38,27 +37,17 @@ func (gh *StartGameHandler) StartGame(rw http.ResponseWriter, r *http.Request) {
 	gh.l.Printf("[DEBUG] start a game %s", r.Method)
 
 	vars := mux.Vars(r)
-	code := vars["code"]
+	id := vars["id"]
 
-	g, err := gh.f.FindByCode(domain.GameCode(code))
+	c, err := command.NewStartGameCommand(uuid.MustParse(id))
 	if err != nil {
-		gh.l.Printf("[ERROR] Game not found  %s", err)
-		http.Error(rw, "Error finding game", http.StatusBadRequest)
-		return
-	}
-
-	// decode request with anonymous struct
-	t := &StartGameRequest{}
-
-	err = utils.FromJSON(t, r.Body)
-	if err != nil {
-		gh.l.Printf("[ERROR] error decoding request %s", err)
-		http.Error(rw, "Error processing request", http.StatusUnprocessableEntity)
+		gh.l.Printf("[ERROR] error command request %s", err)
+		http.Error(rw, "Error processing command", http.StatusUnprocessableEntity)
 		return
 	}
 
 	// call usecase with valid command
-	err = gh.s.StartGame(g)
+	err = gh.s.StartGame(c)
 	if err != nil {
 		gh.l.Printf("[ERROR] starting game failed %s", err)
 		http.Error(rw, "Error starting game", http.StatusBadRequest)
@@ -66,11 +55,4 @@ func (gh *StartGameHandler) StartGame(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	rw.WriteHeader(http.StatusCreated)
-}
-
-// An StartGameRequest model.
-//
-// swagger:parameters addGameId
-type StartGameRequest struct {
-	// The code to submit
 }

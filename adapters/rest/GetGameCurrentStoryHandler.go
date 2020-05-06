@@ -13,10 +13,10 @@ import (
 type GetGameCurrentStoryHandler struct {
 	l  *log.Logger
 	ds query.DisplayCurrentStory
-	fg query.FindGame
+	fg query.FindGameByCode
 }
 
-func NewGetGameCurrentStoryHandler(log *log.Logger, display query.DisplayCurrentStory, finder query.FindGame) *GetGameCurrentStoryHandler {
+func NewGetGameCurrentStoryHandler(log *log.Logger, display query.DisplayCurrentStory, finder query.FindGameByCode) *GetGameCurrentStoryHandler {
 	return &GetGameCurrentStoryHandler{
 		l:  log,
 		ds: display,
@@ -39,7 +39,7 @@ func (gh *GetGameCurrentStoryHandler) GetGameCurrentStory(rw http.ResponseWriter
 	code := vars["code"]
 	gh.l.Printf("[DEBUG] get current story fo game %s", code)
 
-	g, err := gh.fg.FindByCode(domain.GameCode(code))
+	g, err := gh.fg.FindGameByCode(domain.GameCode(code))
 	if err != nil {
 		gh.l.Printf("[ERROR] Game not found  %s", err)
 		http.Error(rw, "Error finding game", http.StatusBadRequest)

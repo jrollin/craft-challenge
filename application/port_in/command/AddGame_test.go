@@ -1,24 +1,26 @@
 package command
 
 import (
-	"github.com/google/uuid"
 	"testing"
+
+	"github.com/google/uuid"
+	"github.com/jrollin/craft-challenge/validator"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestAddGameValidationWithoutCode(t *testing.T) {
+func TestAddGame_ValidationWithoutCode(t *testing.T) {
 	id := uuid.New()
 	_, err := NewAddGameCommand(id, "")
 
-	if err == nil {
-		t.Errorf("AddGameCommand Code is required")
-	}
+	assert.Error(t, err)
+	assert.NotEmpty(t, err.Error())
+
+	assert.Len(t, err.(*validator.Error).Fields, 1)
 }
 
-func TestAddGameValidation(t *testing.T) {
+func TestAddGame_Validation(t *testing.T) {
 	id := uuid.New()
 	_, err := NewAddGameCommand(id, "abc")
 
-	if err != nil {
-		t.Errorf("AddGameCommand validation failed %v with %s", err, id)
-	}
+	assert.NoError(t, err)
 }

@@ -2,6 +2,6 @@ package port_out
 
 import "github.com/jrollin/craft-challenge/domain"
 
-type StoreGameState interface {
-	StartGame(game *domain.Game) error
+type StoreGame interface {
+	StoreGame(game *domain.Game) error
 }

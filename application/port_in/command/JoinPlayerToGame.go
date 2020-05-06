@@ -3,8 +3,8 @@ package command
 import (
 	"errors"
 
-	"github.com/go-playground/validator"
 	"github.com/google/uuid"
+	"github.com/jrollin/craft-challenge/validator"
 )
 
 var (
@@ -34,6 +34,6 @@ func NewJoinGameCommand(ID uuid.UUID, code string, username string, server strin
 }
 
 func (jg *JoinGameCommand) validate() error {
-	validate := validator.New()
-	return validate.Struct(jg)
+	validate := validator.NewValidator()
+	return validate.Validate(jg)
 }

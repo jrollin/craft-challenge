@@ -13,10 +13,10 @@ import (
 type ListGamePlayersHandler struct {
 	l  *log.Logger
 	lg query.ListGamePlayers
-	fg query.FindGame
+	fg query.FindGameByCode
 }
 
-func NewListGamePlayersHandler(log *log.Logger, lister query.ListGamePlayers, finder query.FindGame) *ListGamePlayersHandler {
+func NewListGamePlayersHandler(log *log.Logger, lister query.ListGamePlayers, finder query.FindGameByCode) *ListGamePlayersHandler {
 	return &ListGamePlayersHandler{
 		l:  log,
 		lg: lister,
@@ -39,7 +39,7 @@ func (gh *ListGamePlayersHandler) ListGamePlayers(rw http.ResponseWriter, r *htt
 	code := vars["code"]
 	gh.l.Printf("[DEBUG] list players fo game %s", code)
 
-	g, err := gh.fg.FindByCode(domain.GameCode(code))
+	g, err := gh.fg.FindGameByCode(domain.GameCode(code))
 	if err != nil {
 		gh.l.Printf("[ERROR] Game not found  %s", err)
 		http.Error(rw, "Error finding game", http.StatusBadRequest)

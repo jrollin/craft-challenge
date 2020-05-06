@@ -43,24 +43,27 @@ func main() {
 	// define GET routes
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/games", qlh.ListAll)
-	getRouter.HandleFunc("/games/{code:[a-z]+}", qfh.GetGameByCode)
-	getRouter.HandleFunc("/games/{code:[a-z]+}/players", qplh.ListGamePlayers)
-	getRouter.HandleFunc("/games/{code:[a-z]+}/stories/current", qsrh.GetGameCurrentStory)
+	getRouter.HandleFunc("/games/{id}", qfh.GetGameByCode)
+	getRouter.HandleFunc("/games/{id}/players", qplh.ListGamePlayers)
+	getRouter.HandleFunc("/games/{id}/stories/current", qsrh.GetGameCurrentStory)
 
 	// command use cases
 	ca := service.NewGameAdder(l, gr)
-	cs := service.NewGameStarter(l, gr)
+	cs := service.NewGameStarter(l, gr, gr)
+	cp := service.NewGamePublisher(l, gr, gr)
 	cpj := service.NewPlayerGameJoiner(l, gr, gr)
 	// command handlers
 	cah := rest.NewAddGameHandler(l, ca)
+	cph := rest.NewPublishGameHandler(l, cp)
 	csh := rest.NewStartGameHandler(l, cs, qf)
 	cpjh := rest.NewPlayerJoinGameHandler(l, cpj)
 
 	// define POST routes
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/games", cah.AddGame)
-	postRouter.HandleFunc("/games/{code:[a-z]+}/start", csh.StartGame)
-	postRouter.HandleFunc("/games/{code:[a-z]+}/players", cpjh.JoinPlayerGame)
+	postRouter.HandleFunc("/games/{id}/publish", cph.PublishGame)
+	postRouter.HandleFunc("/games/{id}/start", csh.StartGame)
+	postRouter.HandleFunc("/games/{id}/players", cpjh.JoinPlayerGame)
 
 	// doc
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
