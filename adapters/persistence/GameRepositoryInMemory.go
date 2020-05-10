@@ -3,43 +3,43 @@ package persistence
 import (
 	"errors"
 	"fmt"
+	"github.com/jrollin/craft-challenge/domain/model"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jrollin/craft-challenge/application/port_out"
-	"github.com/jrollin/craft-challenge/domain"
+	"github.com/jrollin/craft-challenge/domain/port_out"
 )
 
 type GameRepositoryInMemory struct {
-	GameList map[string]*domain.Game
+	GameList map[string]*model.Game
 }
 
 func NewGameRepositoryInMemoryAdapter() *GameRepositoryInMemory {
-	gameList := make(map[string]*domain.Game)
-	gameList["abc"] = &domain.Game{
-		ID:        domain.GameID(uuid.MustParse("11111111-2222-3333-4444-555555555555")),
-		Code:      domain.GameCode("abc"),
+	gameList := make(map[string]*model.Game)
+	gameList["abc"] = &model.Game{
+		ID:        model.GameID(uuid.MustParse("11111111-2222-3333-4444-555555555555")),
+		Code:      model.GameCode("abc"),
 		CreatedAt: time.Now().UTC(),
-		Players:   map[domain.PlayerID]*domain.Player{},
-		Stories: []*domain.Story{
-			&domain.Story{
-				ID:          domain.StoryID(uuid.New()),
+		Players:   map[model.PlayerID]*model.Player{},
+		Stories: []*model.Story{
+			&model.Story{
+				ID:          model.StoryID(uuid.New()),
 				Title:       "First, a red bike",
 				Description: "Build me a red bike",
-				Specifications: []*domain.Specification{
-					&domain.Specification{
+				Specifications: []*model.Specification{
+					&model.Specification{
 						Description: "Bike should be red",
-						Rules: []*domain.Rule{
-							&domain.Rule{
+						Rules: []*model.Rule{
+							&model.Rule{
 								Description: "should have property color with value red",
-								Query: domain.Request{
+								Query: model.Request{
 									Method:       "GET",
 									URL:          "/car/2",
 									QueryParams:  nil,
 									BodyParams:   nil,
 									HeaderParams: nil,
 								},
-								Assertion: domain.Assertion{
+								Assertion: model.Assertion{
 									RequestPart: "body",
 									Matcher:     "equals",
 									Param:       "$.color",
@@ -48,17 +48,17 @@ func NewGameRepositoryInMemoryAdapter() *GameRepositoryInMemory {
 							},
 						},
 					},
-					&domain.Specification{Description: "Bike should have 2 wheels"},
+					&model.Specification{Description: "Bike should have 2 wheels"},
 				},
 			},
-			&domain.Story{
-				ID:          domain.StoryID(uuid.New()),
+			&model.Story{
+				ID:          model.StoryID(uuid.New()),
 				Title:       "Then a yellow car",
 				Description: "Build me a car !",
-				Specifications: []*domain.Specification{
-					&domain.Specification{Description: "Car should be yellow"},
-					&domain.Specification{Description: "Car can move forward"},
-					&domain.Specification{Description: "Car can move backward"},
+				Specifications: []*model.Specification{
+					&model.Specification{Description: "Car should be yellow"},
+					&model.Specification{Description: "Car can move forward"},
+					&model.Specification{Description: "Car can move backward"},
 				},
 			},
 		},
@@ -69,11 +69,11 @@ func NewGameRepositoryInMemoryAdapter() *GameRepositoryInMemory {
 	}
 }
 
-func (gr *GameRepositoryInMemory) GetAllGames() (domain.GameList, error) {
+func (gr *GameRepositoryInMemory) GetAllGames() (model.GameList, error) {
 	return gr.GameList, nil
 }
 
-func (gr *GameRepositoryInMemory) GetGameByCode(code domain.GameCode) (*domain.Game, error) {
+func (gr *GameRepositoryInMemory) GetGameByCode(code model.GameCode) (*model.Game, error) {
 
 	g, ok := gr.GameList[string(code)]
 	if ok == false {
@@ -83,7 +83,7 @@ func (gr *GameRepositoryInMemory) GetGameByCode(code domain.GameCode) (*domain.G
 
 }
 
-func (gr *GameRepositoryInMemory) GetGame(id domain.GameID) (*domain.Game, error) {
+func (gr *GameRepositoryInMemory) GetGame(id model.GameID) (*model.Game, error) {
 
 	for _, p := range gr.GameList {
 		if p.ID == id {
@@ -94,7 +94,7 @@ func (gr *GameRepositoryInMemory) GetGame(id domain.GameID) (*domain.Game, error
 
 }
 
-func (gr *GameRepositoryInMemory) AddGame(game *domain.Game) error {
+func (gr *GameRepositoryInMemory) AddGame(game *model.Game) error {
 	_, ok := gr.GameList[string(game.Code)]
 	if ok == true {
 		return port_out.ErrGameAlreadyExists
@@ -103,7 +103,7 @@ func (gr *GameRepositoryInMemory) AddGame(game *domain.Game) error {
 	return nil
 }
 
-func (gr *GameRepositoryInMemory) AddPlayerToGame(player *domain.Player, game *domain.Game) error {
+func (gr *GameRepositoryInMemory) AddPlayerToGame(player *model.Player, game *model.Game) error {
 	g, err := gr.GetGameByCode(game.Code)
 	if err != nil {
 		return errors.New("error joining player to game")
@@ -116,13 +116,13 @@ func (gr *GameRepositoryInMemory) AddPlayerToGame(player *domain.Player, game *d
 	return nil
 }
 
-func (gr *GameRepositoryInMemory) ListGamePlayers(game *domain.Game) (domain.PlayerList, error) {
+func (gr *GameRepositoryInMemory) ListGamePlayers(game *model.Game) (model.PlayerList, error) {
 	g, ok := gr.GameList[string(game.Code)]
 	if ok == false {
 		return nil, port_out.ErrGameNotFound
 	}
 
-	pl := []*domain.Player{}
+	pl := []*model.Player{}
 
 	for _, p := range g.Players {
 		pl = append(pl, p)
@@ -131,7 +131,7 @@ func (gr *GameRepositoryInMemory) ListGamePlayers(game *domain.Game) (domain.Pla
 	return pl, nil
 }
 
-func (gr *GameRepositoryInMemory) StoreGame(game *domain.Game) error {
+func (gr *GameRepositoryInMemory) StoreGame(game *model.Game) error {
 
 	g, ok := gr.GameList[string(game.Code)]
 	if ok == false {
@@ -143,7 +143,7 @@ func (gr *GameRepositoryInMemory) StoreGame(game *domain.Game) error {
 	return nil
 }
 
-func (gr *GameRepositoryInMemory) ListGameStories(game *domain.Game) (domain.Stories, error) {
+func (gr *GameRepositoryInMemory) ListGameStories(game *model.Game) (model.Stories, error) {
 
 	g, ok := gr.GameList[string(game.Code)]
 	if ok == false {

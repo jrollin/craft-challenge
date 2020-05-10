@@ -1,14 +1,14 @@
 package rest
 
 import (
+	"github.com/jrollin/craft-challenge/domain/model"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/jrollin/craft-challenge/adapters/rest/api"
 	"github.com/jrollin/craft-challenge/adapters/rest/utils"
-	"github.com/jrollin/craft-challenge/application/port_in/query"
-	"github.com/jrollin/craft-challenge/domain"
+	"github.com/jrollin/craft-challenge/domain/port_in/query"
 )
 
 type GetGameHandler struct {
@@ -39,7 +39,7 @@ func (gh *GetGameHandler) GetGameByCode(rw http.ResponseWriter, r *http.Request)
 	gh.l.Printf("[DEBUG] get game by code %s", code)
 
 	// find game by code received
-	game, err := gh.f.FindGameByCode(domain.GameCode(code))
+	game, err := gh.f.FindGameByCode(model.GameCode(code))
 	if err != nil {
 		gh.l.Printf("[ERROR] Find game by code %s", err)
 		http.Error(rw, "Error finding game", http.StatusNotFound)

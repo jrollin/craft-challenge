@@ -21,6 +21,8 @@ require (
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/stretchr/testify v1.5.1
 	go.mongodb.org/mongo-driver v1.3.2 // indirect
+	golang.org/x/crypto v0.0.0-20190617133340-57b3e21c3d56 // indirect
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
+	golang.org/x/tools v0.0.0-20190617190820-da514acc4774 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 )

@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jrollin/craft-challenge/adapters/rest/utils"
-	"github.com/jrollin/craft-challenge/application/port_in/command"
+	"github.com/jrollin/craft-challenge/domain/port_in/command"
 )
 
 type PlayerJoinGameHandler struct {

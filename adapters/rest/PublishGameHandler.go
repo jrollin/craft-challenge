@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"github.com/jrollin/craft-challenge/application/port_in/command"
+	"github.com/jrollin/craft-challenge/domain/port_in/command"
 )
 
 type PublishGameHandler struct {
