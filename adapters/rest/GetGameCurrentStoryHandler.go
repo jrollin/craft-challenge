@@ -1,13 +1,13 @@
 package rest
 
 import (
+	"github.com/jrollin/craft-challenge/domain/model"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/jrollin/craft-challenge/adapters/rest/utils"
-	"github.com/jrollin/craft-challenge/application/port_in/query"
-	"github.com/jrollin/craft-challenge/domain"
+	"github.com/jrollin/craft-challenge/domain/port_in/query"
 )
 
 type GetGameCurrentStoryHandler struct {
@@ -39,7 +39,7 @@ func (gh *GetGameCurrentStoryHandler) GetGameCurrentStory(rw http.ResponseWriter
 	code := vars["code"]
 	gh.l.Printf("[DEBUG] get current story fo game %s", code)
 
-	g, err := gh.fg.FindGameByCode(domain.GameCode(code))
+	g, err := gh.fg.FindGameByCode(model.GameCode(code))
 	if err != nil {
 		gh.l.Printf("[ERROR] Game not found  %s", err)
 		http.Error(rw, "Error finding game", http.StatusBadRequest)
@@ -47,7 +47,7 @@ func (gh *GetGameCurrentStoryHandler) GetGameCurrentStory(rw http.ResponseWriter
 	}
 
 	//@todo get current connected player
-	player := &domain.Player{}
+	player := &model.Player{}
 
 	story, err := gh.ds.DisplayCurrentStoryForPlayer(g, player)
 	if err != nil {

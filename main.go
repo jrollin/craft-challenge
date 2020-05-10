@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/jrollin/craft-challenge/application"
 	"log"
 	"net/http"
 	"os"
@@ -13,7 +14,6 @@ import (
 
 	"github.com/jrollin/craft-challenge/adapters/persistence"
 	"github.com/jrollin/craft-challenge/adapters/rest"
-	"github.com/jrollin/craft-challenge/application/service"
 )
 
 var bindAddress = ":3000"
@@ -30,10 +30,10 @@ func main() {
 	gr := persistence.NewGameRepositoryInMemoryAdapter()
 
 	// query use cases
-	ql := service.NewGameLister(l, gr)
-	qf := service.NewGameFinder(l, gr)
-	qpl := service.NewGamePlayerLister(l, gr)
-	qsr := service.NewGameStoryReader(l, gr)
+	ql := application.NewGameLister(l, gr)
+	qf := application.NewGameFinder(l, gr)
+	qpl := application.NewGamePlayerLister(l, gr)
+	qsr := application.NewGameStoryReader(l, gr)
 	// query handlers
 	qlh := rest.NewListGameHandler(l, ql)
 	qfh := rest.NewGetGameHandler(l, qf)
@@ -48,10 +48,10 @@ func main() {
 	getRouter.HandleFunc("/games/{id}/stories/current", qsrh.GetGameCurrentStory)
 
 	// command use cases
-	ca := service.NewGameAdder(l, gr)
-	cs := service.NewGameStarter(l, gr, gr)
-	cp := service.NewGamePublisher(l, gr, gr)
-	cpj := service.NewPlayerGameJoiner(l, gr, gr)
+	ca := application.NewGameAdder(l, gr)
+	cs := application.NewGameStarter(l, gr, gr)
+	cp := application.NewGamePublisher(l, gr, gr)
+	cpj := application.NewPlayerGameJoiner(l, gr, gr)
 	// command handlers
 	cah := rest.NewAddGameHandler(l, ca)
 	cph := rest.NewPublishGameHandler(l, cp)

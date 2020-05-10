@@ -1,10 +1,10 @@
 package api
 
 import (
+	"github.com/jrollin/craft-challenge/domain/model"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jrollin/craft-challenge/domain"
 )
 
 // swagger:response playerResponse
@@ -15,7 +15,7 @@ type Player struct {
 	JoinedAt time.Time `json:"joined_at"`
 }
 
-func NewPlayerFromDomain(player *domain.Player) *Player {
+func NewPlayerFromDomain(player *model.Player) *Player {
 	return &Player{
 		ID:       uuid.UUID(player.ID),
 		Username: player.Username,

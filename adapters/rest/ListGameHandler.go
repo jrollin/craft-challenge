@@ -6,7 +6,7 @@ import (
 
 	"github.com/jrollin/craft-challenge/adapters/rest/api"
 	"github.com/jrollin/craft-challenge/adapters/rest/utils"
-	"github.com/jrollin/craft-challenge/application/port_in/query"
+	"github.com/jrollin/craft-challenge/domain/port_in/query"
 )
 
 type ListGameHandler struct {

@@ -1,10 +1,10 @@
 package api
 
 import (
+	"github.com/jrollin/craft-challenge/domain/model"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jrollin/craft-challenge/domain"
 )
 
 // swagger:response gameResponse
@@ -16,7 +16,7 @@ type Game struct {
 	PublishedAt time.Time `json:"published_at"`
 }
 
-func NewGameFromDomain(game *domain.Game) *Game {
+func NewGameFromDomain(game *model.Game) *Game {
 	g := &Game{
 		ID:          uuid.UUID(game.ID),
 		Code:        string(game.Code),
